@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}Register — CRS Fire Service{% endblock %}
+{% block content %}
+<div class="min-vh-100 d-flex align-items-center justify-content-center py-4" style="background:linear-gradient(135deg,#1a1a2e 0%,#c0392b 100%)">
+  <div class="card shadow-lg" style="width:100%;max-width:520px;border-radius:16px">
+    <div class="card-body p-4 p-md-5">
+      <div class="text-center mb-4">
+        <div class="mb-2" style="font-size:2.5rem;color:#c0392b"><i class="bi bi-fire"></i></div>
+        <h5 class="fw-700">Create Your Account</h5>
+        <p class="text-muted small">CRS Fire Service — Disaster Report System</p>
+        <hr/>
+      </div>
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label fw-600">First Name</label>
+            {{ form.first_name }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-600">Last Name</label>
+            {{ form.last_name }}
+          </div>
+          <div class="col-12">
+            <label class="form-label fw-600">Username</label>
+            {{ form.username }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-600">Email Address</label>
+            {{ form.email }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-600">Phone Number</label>
+            {{ form.phone_number }}
+          </div>
+          <div class="col-12">
+            <label class="form-label fw-600">Role</label>
+            {{ form.role }}
+            <small class="text-muted">Admin accounts are created by the system administrator.</small>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-600">Password</label>
+            {{ form.password1 }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-600">Confirm Password</label>
+            {{ form.password2 }}
+          </div>
+        </div>
+
+        {% if form.errors %}
+        <div class="alert alert-danger mt-3 small">
+          {% for field, errors in form.errors.items %}
+            {% for error in errors %}<div>{{ error }}</div>{% endfor %}
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-crs w-100 py-2 fw-700 mt-4" style="border-radius:8px">
+          <i class="bi bi-person-plus me-2"></i>Create Account
+        </button>
+      </form>
+
+      <div class="text-center mt-3">
+        <small class="text-muted">Already have an account?
+          <a href="{% url 'accounts:login' %}" class="text-danger fw-600">Login here</a>
+        </small>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

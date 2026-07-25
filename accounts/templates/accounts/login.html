@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Login — CRS Fire Service{% endblock %}
+{% block content %}
+<div class="min-vh-100 d-flex align-items-center justify-content-center" style="background:linear-gradient(135deg,#1a1a2e 0%,#c0392b 100%)">
+  <div class="card shadow-lg" style="width:100%;max-width:420px;border-radius:16px">
+    <div class="card-body p-4 p-md-5">
+      <div class="text-center mb-4">
+        <div class="mb-2" style="font-size:3rem;color:#c0392b"><i class="bi bi-fire"></i></div>
+        <h4 class="fw-800 mb-0" style="color:#1a1a2e">CRS Fire Service</h4>
+        <p class="text-muted small">Disaster Report Management System</p>
+        <hr/>
+        <h5 class="fw-700">Sign In to Your Account</h5>
+      </div>
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label fw-600">Username</label>
+          {{ form.username }}
+          {% if form.username.errors %}
+          <div class="text-danger small mt-1">{{ form.username.errors }}</div>
+          {% endif %}
+        </div>
+        <div class="mb-4">
+          <label class="form-label fw-600">Password</label>
+          {{ form.password }}
+          {% if form.password.errors %}
+          <div class="text-danger small mt-1">{{ form.password.errors }}</div>
+          {% endif %}
+        </div>
+        <button type="submit" class="btn btn-crs w-100 py-2 fw-700" style="border-radius:8px">
+          <i class="bi bi-box-arrow-in-right me-2"></i>Login
+        </button>
+      </form>
+
+      <div class="text-center mt-4">
+        <small class="text-muted">Don't have an account?
+          <a href="{% url 'accounts:register' %}" class="text-danger fw-600">Register here</a>
+        </small>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

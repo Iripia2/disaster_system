@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}Reports — CRS Fire Service{% endblock %}
+{% block nav_reports %}active{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+      <h4>
+        <i class="bi bi-file-earmark-text me-2" style="color:#c0392b"></i>
+        {% if user.role == 'admin' %}All Reports{% elif user.role == 'responder' %}My Assignments{% else %}My Reports{% endif %}
+      </h4>
+    </div>
+    {% if user.role == 'reporter' or user.role == 'admin' %}
+    <a href="{% url 'reports:submit' %}" class="btn btn-crs btn-sm">
+      <i class="bi bi-plus-circle me-1"></i>New Report
+    </a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- FILTERS -->
+<div class="card mb-3">
+  <div class="card-body py-2">
+    <form method="get" class="d-flex gap-2 flex-wrap align-items-center">
+      <label class="fw-600 small me-1">Filter:</label>
+      <select name="status" class="form-select form-select-sm" style="width:auto">
+        <option value="">All Status</option>
+        <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+        <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+        <option value="resolved" {% if status_filter == 'resolved' %}selected{% endif %}>Resolved</option>
+      </select>
+      <select name="severity" class="form-select form-select-sm" style="width:auto">
+        <option value="">All Severity</option>
+        <option value="low" {% if severity_filter == 'low' %}selected{% endif %}>Low</option>
+        <option value="medium" {% if severity_filter == 'medium' %}selected{% endif %}>Medium</option>
+        <option value="high" {% if severity_filter == 'high' %}selected{% endif %}>High</option>
+        <option value="critical" {% if severity_filter == 'critical' %}selected{% endif %}>Critical</option>
+      </select>
+      <button type="submit" class="btn btn-sm btn-crs">Apply</button>
+      <a href="{% url 'reports:list' %}" class="btn btn-sm btn-outline-secondary">Clear</a>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th>#ID</th>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Location</th>
+            <th>Severity</th>
+            <th>Status</th>
+            <th>Reported</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for report in reports %}
+          <tr>
+            <td class="fw-700">#{{ report.id }}</td>
+            <td>{{ report.title|truncatechars:35 }}</td>
+            <td>{{ report.category.name|default:"—" }}</td>
+            <td class="text-muted small">{{ report.location.lga }}</td>
+            <td><span class="badge badge-{{ report.severity }}">{{ report.get_severity_display }}</span></td>
+            <td><span class="badge bg-{{ report.get_status_color }}">{{ report.get_status_display }}</span></td>
+            <td class="text-muted small">{{ report.reported_at|date:"d M Y" }}</td>
+            <td>
+              <a href="{% url 'reports:detail' report.pk %}" class="btn btn-sm btn-outline-danger">
+                <i class="bi bi-eye"></i>
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="8" class="text-center py-5 text-muted">
+              <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+              No reports found.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block title %}Responder Dashboard — CRS Fire Service{% endblock %}
+{% block nav_dashboard %}active{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <h4><i class="bi bi-person-badge me-2" style="color:#c0392b"></i>Responder Dashboard</h4>
+      <small class="text-muted">Welcome, {{ user.get_full_name }} — Field Responder</small>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="card stat-card p-3">
+      <div class="d-flex align-items-center gap-3">
+        <div class="icon-box" style="background:#fdecea">
+          <i class="bi bi-clipboard-check" style="color:#c0392b"></i>
+        </div>
+        <div>
+          <div class="fw-700 fs-4">{{ total_assigned }}</div>
+          <div class="text-muted small">Total Assigned</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card stat-card p-3">
+      <div class="d-flex align-items-center gap-3">
+        <div class="icon-box" style="background:#fff3cd">
+          <i class="bi bi-hourglass-split" style="color:#e67e22"></i>
+        </div>
+        <div>
+          <div class="fw-700 fs-4">{{ pending }}</div>
+          <div class="text-muted small">Awaiting Response</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card stat-card p-3">
+      <div class="d-flex align-items-center gap-3">
+        <div class="icon-box" style="background:#f8d7da">
+          <i class="bi bi-truck" style="color:#c0392b"></i>
+        </div>
+        <div>
+          <div class="fw-700 fs-4">{{ active }}</div>
+          <div class="text-muted small">On Route/Scene</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card stat-card p-3">
+      <div class="d-flex align-items-center gap-3">
+        <div class="icon-box" style="background:#d4edda">
+          <i class="bi bi-check-circle" style="color:#15803d"></i>
+        </div>
+        <div>
+          <div class="fw-700 fs-4">{{ resolved }}</div>
+          <div class="text-muted small">Resolved</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center" style="background:#1a1a2e;color:#fff">
+    <span><i class="bi bi-list-check me-2"></i>My Assignments</span>
+    <a href="{% url 'reports:list' %}" class="btn btn-sm btn-outline-light">View All</a>
+  </div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th>Report</th>
+            <th>Title</th>
+            <th>Severity</th>
+            <th>My Status</th>
+            <th>Assigned</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for assignment in recent_assignments %}
+          <tr>
+            <td class="fw-700">#{{ assignment.report.id }}</td>
+            <td>{{ assignment.report.title|truncatechars:40 }}</td>
+            <td>
+              <span class="badge badge-{{ assignment.report.severity }}">
+                {{ assignment.report.get_severity_display }}
+              </span>
+            </td>
+            <td>
+              <span class="badge bg-primary">{{ assignment.get_status_display }}</span>
+            </td>
+            <td class="text-muted">{{ assignment.assigned_at|date:"d M Y" }}</td>
+            <td>
+              <a href="{% url 'reports:detail' assignment.report.pk %}" class="btn btn-sm btn-outline-danger">
+                <i class="bi bi-eye"></i> View
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="text-center py-5 text-muted">
+              <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+              No assignments yet. You will be notified when assigned to a report.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

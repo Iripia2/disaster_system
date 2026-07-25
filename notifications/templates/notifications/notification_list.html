@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Notifications — CRS Fire Service{% endblock %}
+{% block nav_notif %}active{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h4><i class="bi bi-bell me-2" style="color:#c0392b"></i>Notifications</h4>
+</div>
+<div class="card">
+  <div class="card-body p-0">
+    {% for notif in notifications %}
+    <div class="d-flex align-items-start gap-3 p-3 border-bottom {% if not notif.is_read %}bg-light{% endif %}">
+      <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+           style="width:40px;height:40px;background:#fdecea">
+        <i class="bi bi-bell" style="color:#c0392b"></i>
+      </div>
+      <div class="flex-grow-1">
+        <div class="small fw-600">{{ notif.message }}</div>
+        <div class="text-muted" style="font-size:0.75rem">{{ notif.sent_at|date:"d M Y, H:i" }}</div>
+        {% if notif.report %}
+        <a href="{% url 'reports:detail' notif.report.pk %}" class="btn btn-sm btn-outline-danger mt-1">
+          View Report
+        </a>
+        {% endif %}
+      </div>
+      {% if not notif.is_read %}
+      <span class="badge bg-danger">New</span>
+      {% endif %}
+    </div>
+    {% empty %}
+    <div class="text-center py-5 text-muted">
+      <i class="bi bi-bell-slash fs-1 d-block mb-2"></i>
+      No notifications yet.
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
