@@ -4,7 +4,7 @@ services:
     env: python
     plan: free
     buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput"
-    startCommand: "gunicorn disaster_system.wsgi"
+    startCommand: "bash -lc 'python manage.py migrate --noinput && gunicorn disaster_system.wsgi'"
     envVars:
       - key: SECRET_KEY
         generateValue: true
