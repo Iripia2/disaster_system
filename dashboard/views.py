@@ -6,6 +6,12 @@ from accounts.models import CustomUser
 from notifications.models import Notification
 
 
+def _feed_context():
+    return {
+        'feed_reports': DisasterReport.objects.select_related('category', 'location').order_by('-reported_at')[:10],
+    }
+
+
 @login_required
 def home(request):
     user = request.user
@@ -29,6 +35,7 @@ def reporter_dashboard(request):
         'recent_reports': my_reports[:5],
         'unread_notifications': user.notifications.filter(is_read=False).count(),
     }
+    context.update(_feed_context())
     return render(request, 'dashboard/reporter_dashboard.html', context)
 
 
@@ -52,6 +59,7 @@ def admin_dashboard(request):
             for c in DisasterCategory.objects.values_list('name', flat=True)
         ],
     }
+    context.update(_feed_context())
     return render(request, 'dashboard/admin_dashboard.html', context)
 
 
@@ -67,4 +75,5 @@ def responder_dashboard(request):
         'recent_assignments': my_assignments[:6],
         'unread_notifications': user.notifications.filter(is_read=False).count(),
     }
+    context.update(_feed_context())
     return render(request, 'dashboard/responder_dashboard.html', context)

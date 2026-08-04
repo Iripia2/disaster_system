@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Anonymous Report — CRS Fire Service{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="page-header">
+      <h4><i class="bi bi-send me-2" style="color:#c0392b"></i>Submit an Anonymous Disaster Report</h4>
+      <small class="text-muted">No account or login is required. Your report will be reviewed by the CRS Fire Service team.</small>
+    </div>
+
+    <div class="card">
+      <div class="card-body p-4">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-600">Reporter name (optional)</label>
+              {{ form.reporter_name }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-600">Phone number (optional)</label>
+              {{ form.phone_number }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-600">Disaster category</label>
+              {{ form.category }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-600">Incident title</label>
+              {{ form.title }}
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-600">Description</label>
+              {{ form.description }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-600">Severity level</label>
+              {{ form.severity }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-600">Number of people affected</label>
+              {{ form.affected_count }}
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-600">Street address</label>
+              {{ form.address }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-600">City</label>
+              {{ form.city }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-600">LGA</label>
+              {{ form.lga }}
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-600">Date and time of incident</label>
+              {{ form.incident_date }}
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-600">Photo upload (optional)</label>
+              {{ form.file }}
+            </div>
+          </div>
+
+          <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-crs">
+              <i class="bi bi-send me-2"></i>Submit Anonymous Report
+            </button>
+            <a href="{% url 'accounts:login' %}" class="btn btn-outline-secondary">Back to Login</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -2,11 +2,58 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
-from .models import DisasterReport, MediaAttachment, ResponderAssignment, Comment
+from django.http import JsonResponse
+from .models import DisasterReport, MediaAttachment, ResponderAssignment, Comment, Location
 from .forms import (DisasterReportForm, LocationForm, MediaAttachmentForm,
-                    CommentForm, AssignResponderForm, UpdateStatusForm)
+                    CommentForm, AssignResponderForm, UpdateStatusForm, AnonymousReportForm)
 from notifications.models import Notification
 from accounts.models import CustomUser
+
+
+def anonymous_submit_report(request):
+    if request.method == 'POST':
+        form = AnonymousReportForm(request.POST, request.FILES)
+        if form.is_valid():
+            location = Location.objects.create(
+                address=form.cleaned_data['address'],
+                city=form.cleaned_data['city'],
+                lga=form.cleaned_data['lga'],
+                landmark=''
+            )
+            report = DisasterReport.objects.create(
+                reporter=None,
+                category=form.cleaned_data['category'],
+                location=location,
+                title=form.cleaned_data['title'],
+                description=form.cleaned_data['description'],
+                severity=form.cleaned_data['severity'],
+                status='pending',
+                affected_count=form.cleaned_data.get('affected_count') or 0,
+                incident_date=form.cleaned_data['incident_date'],
+                is_anonymous=True,
+            )
+            if request.FILES.get('file'):
+                MediaAttachment.objects.create(report=report, file=request.FILES['file'], file_type='image')
+            admins = CustomUser.objects.filter(role='admin')
+            for admin in admins:
+                Notification.objects.create(
+                    user=admin,
+                    report=report,
+                    message=f'Anonymous disaster report submitted: "{report.title}"',
+                    notif_type='new_report'
+                )
+            request.session['anonymous_report_id'] = report.id
+            return redirect('reports:anonymous_success')
+    else:
+        form = AnonymousReportForm()
+
+    return render(request, 'reports/anonymous_submit.html', {'form': form})
+
+
+def anonymous_success(request):
+    report_id = request.session.get('anonymous_report_id')
+    report = DisasterReport.objects.filter(pk=report_id).first()
+    return render(request, 'reports/anonymous_success.html', {'report': report})
 
 
 @login_required
@@ -151,6 +198,36 @@ def report_detail(request, pk):
         'assign_form': assign_form,
         'update_status_form': update_status_form,
     })
+
+
+def public_feed_data(request):
+    reports = DisasterReport.objects.select_related('category', 'location').order_by('-reported_at')
+    status_filter = request.GET.get('status')
+    if status_filter:
+        reports = reports.filter(status=status_filter)
+    search = request.GET.get('search', '').strip()
+    if search:
+        reports = reports.filter(title__icontains=search) | reports.filter(description__icontains=search) | reports.filter(location__lga__icontains=search) | reports.filter(location__city__icontains=search) | reports.filter(category__name__icontains=search)
+    items = []
+    for report in reports:
+        items.append({
+            'id': report.id,
+            'title': report.title,
+            'category_name': report.category.name if report.category else 'Uncategorized',
+            'category_icon': report.category.icon if report.category else 'bi-exclamation-triangle',
+            'location': f"{report.location.lga}, {report.location.city}" if report.location else 'Unknown',
+            'severity': report.severity,
+            'severity_display': report.get_severity_display(),
+            'status': report.status,
+            'status_display': report.get_status_display(),
+            'affected_count': report.affected_count,
+            'reported_at': report.reported_at.isoformat(),
+            'reporter_name': report.get_reporter_name(),
+            'is_anonymous': report.is_anonymous,
+            'is_recent': (timezone.now() - report.reported_at).total_seconds() < 3600,
+            'detail_url': f"/reports/{report.id}/",
+        })
+    return JsonResponse({'reports': items})
 
 
 @login_required

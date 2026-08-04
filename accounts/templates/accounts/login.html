@@ -34,6 +34,12 @@
       </form>
 
       <div class="text-center mt-4">
+        <a href="{% url 'reports:anonymous_submit' %}" class="btn btn-outline-danger w-100 py-2 fw-700" style="border-radius:8px">
+          <i class="bi bi-send me-2"></i>Report Without an Account
+        </a>
+      </div>
+
+      <div class="text-center mt-4">
         <small class="text-muted">Don't have an account?
           <a href="{% url 'accounts:register' %}" class="text-danger fw-600">Register here</a>
         </small>

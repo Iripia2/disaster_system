@@ -3,6 +3,25 @@ from .models import DisasterReport, Location, MediaAttachment, Comment, Responde
 from accounts.models import CustomUser
 
 
+class AnonymousReportForm(forms.Form):
+    reporter_name = forms.CharField(required=False, max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Optional reporter name'}))
+    phone_number = forms.CharField(required=False, max_length=15, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Optional phone number'}))
+    category = forms.ModelChoiceField(queryset=None, widget=forms.Select(attrs={'class': 'form-select'}), required=True)
+    title = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Brief incident title'}))
+    description = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Describe the incident'}))
+    severity = forms.ChoiceField(choices=DisasterReport.SEVERITY_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}))
+    address = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Street address'}))
+    city = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City'}))
+    lga = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'LGA'}))
+    affected_count = forms.IntegerField(required=False, min_value=0, widget=forms.NumberInput(attrs={'class': 'form-control', 'min': 0}))
+    incident_date = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}))
+    file = forms.FileField(required=False, widget=forms.FileInput(attrs={'class': 'form-control'}))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['category'].queryset = DisasterReport._meta.get_field('category').remote_field.model.objects.filter(is_active=True)
+
+
 class LocationForm(forms.ModelForm):
     class Meta:
         model = Location

@@ -42,8 +42,10 @@ class DisasterReport(models.Model):
 
     reporter = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='reports'
+        on_delete=models.SET_NULL,
+        related_name='reports',
+        null=True,
+        blank=True
     )
     category = models.ForeignKey(
         DisasterCategory,
@@ -63,6 +65,12 @@ class DisasterReport(models.Model):
     reported_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_verified = models.BooleanField(default=False)
+    is_anonymous = models.BooleanField(default=False)
+
+    def get_reporter_name(self):
+        if self.reporter:
+            return self.reporter.get_full_name() or self.reporter.username
+        return 'Anonymous'
 
     def __str__(self):
         return f"[{self.status.upper()}] {self.title}"

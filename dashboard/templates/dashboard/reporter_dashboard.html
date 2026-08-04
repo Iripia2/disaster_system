@@ -71,6 +71,30 @@
   </div>
 </div>
 
+<!-- LIVE DISASTER FEED -->
+<div class="card mb-4">
+  <div class="card-header d-flex justify-content-between align-items-center" style="background:#1a1a2e;color:#fff">
+    <span><i class="bi bi-rss me-2"></i>Live Disaster Feed — Cross River State</span>
+    <span class="badge bg-danger">Live</span>
+  </div>
+  <div class="card-body">
+    <div class="row g-2 mb-3">
+      <div class="col-md-6">
+        <input type="text" id="feedSearchReporter" class="form-control" placeholder="Search by keyword, category or LGA">
+      </div>
+      <div class="col-md-6">
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-outline-danger btn-sm active" data-feed-filter="all">All</button>
+          <button type="button" class="btn btn-outline-danger btn-sm" data-feed-filter="pending">Pending</button>
+          <button type="button" class="btn btn-outline-danger btn-sm" data-feed-filter="active">Active</button>
+          <button type="button" class="btn btn-outline-danger btn-sm" data-feed-filter="resolved">Resolved</button>
+        </div>
+      </div>
+    </div>
+    <div id="liveFeedReporter" class="d-flex flex-column gap-3" style="max-height:520px;overflow:auto"></div>
+  </div>
+</div>
+
 <!-- RECENT REPORTS -->
 <div class="card">
   <div class="card-header d-flex justify-content-between align-items-center" style="background:#1a1a2e;color:#fff">
@@ -122,4 +146,70 @@
   </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function renderFeed(items) {
+  const container = document.getElementById('liveFeedReporter');
+  if (!container) return;
+  if (!items.length) {
+    container.innerHTML = '<div class="text-center text-muted py-5">No reports found.</div>';
+    return;
+  }
+  container.innerHTML = items.map(item => {
+    const badgeClass = item.severity === 'critical' ? 'badge-critical' : item.severity === 'high' ? 'badge-high' : item.severity === 'medium' ? 'badge-medium' : 'badge-low';
+    const statusClass = item.status === 'resolved' ? 'bg-success' : item.status === 'active' ? 'bg-danger' : 'bg-warning text-dark';
+    const newBadge = item.is_recent ? '<span class="badge bg-danger ms-2">NEW</span>' : '';
+    return `
+      <div class="card" style="border-left:4px solid #c0392b; border-radius:12px; transition:box-shadow .2s ease;">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start gap-2">
+            <div>
+              <div class="fw-700">#${item.id} — ${item.title}</div>
+              <div class="text-muted small">${item.category_name} <i class="bi ${item.category_icon} ms-1"></i></div>
+            </div>
+            <div class="text-end">
+              <span class="badge ${badgeClass}">${item.severity_display}</span>
+              ${newBadge}
+            </div>
+          </div>
+          <div class="mt-2 small text-muted"><i class="bi bi-geo-alt me-1"></i>${item.location}</div>
+          <div class="mt-2 d-flex flex-wrap gap-2 align-items-center">
+            <span class="badge ${statusClass}">${item.status_display}</span>
+            <span class="text-muted small"><i class="bi bi-people me-1"></i>${item.affected_count} affected</span>
+            <span class="text-muted small"><i class="bi bi-clock me-1"></i>${item.reported_at}</span>
+          </div>
+          <div class="mt-2 d-flex justify-content-between align-items-center">
+            <span class="small text-muted">Reporter: ${item.reporter_name}</span>
+            <a href="${item.detail_url}" class="btn btn-sm btn-outline-danger">View Details</a>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function loadFeed() {
+  const search = document.getElementById('feedSearchReporter')?.value || '';
+  const filter = document.querySelector('[data-feed-filter].active')?.dataset.feedFilter || 'all';
+  const url = `{% url 'reports:feed_data' %}?search=${encodeURIComponent(search)}&status=${filter}`;
+  fetch(url)
+    .then(response => response.json())
+    .then(data => renderFeed(data.reports))
+    .catch(() => renderFeed([]));
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadFeed();
+  document.getElementById('feedSearchReporter')?.addEventListener('input', loadFeed);
+  document.querySelectorAll('[data-feed-filter]').forEach(button => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('[data-feed-filter]').forEach(b => b.classList.remove('active'));
+      button.classList.add('active');
+      loadFeed();
+    });
+  });
+  setInterval(loadFeed, 30000);
+});
+</script>
 {% endblock %}
