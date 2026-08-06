@@ -3,22 +3,22 @@
 {% block content %}
 <div class="row justify-content-center">
   <div class="col-12">
-    <div class="text-white p-5 rounded-4 mb-4" style="background:linear-gradient(135deg,#1a1a2e 0%,#2c3e50 100%);">
+    <div class="p-5 rounded-4 mb-4" style="background:#EDE8E0; border:1px solid rgba(26,26,46,0.08);">
       <div class="d-flex align-items-center gap-3 mb-3">
         <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:56px;height:56px;background:#e67e22">
           <i class="bi bi-fire fs-3 text-white"></i>
         </div>
         <div>
-          <h2 class="fw-bold mb-1">Online Disaster Report Management System</h2>
-          <p class="mb-0 text-light">Cross River State Fire Service, Calabar</p>
+          <h2 class="fw-bold mb-1" style="color:#1a1a2e">Online Disaster Report Management System</h2>
+          <p class="mb-0" style="color:#c0392b">Cross River State Fire Service, Calabar</p>
         </div>
       </div>
-      <p class="lead mb-4" style="max-width:760px;">
+      <p class="lead mb-4" style="max-width:760px; color:#444444;">
         Empowering citizens and emergency responders with real-time disaster reporting and management technology.
       </p>
       <div class="d-flex flex-wrap gap-2">
         <a href="{% url 'accounts:register' %}" class="btn btn-crs">Get Started</a>
-        <a href="{% url 'reports:anonymous_submit' %}" class="btn btn-outline-light">Submit Anonymous Report</a>
+        <a href="{% url 'reports:anonymous_submit' %}" class="btn" style="background:transparent; border:2px solid #1a1a2e; color:#1a1a2e;">Submit Anonymous Report</a>
       </div>
     </div>
 

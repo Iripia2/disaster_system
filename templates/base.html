@@ -96,12 +96,47 @@
     .btn-crs { background: var(--crs-red); color: #fff; border: none; }
     .btn-crs:hover { background: #a93226; color: #fff; }
 
+    /* SWIPE HINT */
+    .swipe-hint {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      display: none;
+      opacity: 0;
+      padding: 10px 24px;
+      border: 2px solid var(--crs-red);
+      border-radius: 50px;
+      background: #EDE8E0;
+      color: var(--crs-red);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-size: 0.8rem;
+      white-space: nowrap;
+      transition: opacity 0.5s ease;
+    }
+    .swipe-hint.show {
+      opacity: 1;
+      animation: swipePulse 1.2s ease-in-out infinite;
+    }
+    .swipe-hint.hide {
+      opacity: 0;
+    }
+    @keyframes swipePulse {
+      0% { opacity: 1; transform: translateX(-50%) translateX(0); }
+      50% { opacity: 0.3; transform: translateX(-50%) translateX(8px); }
+      100% { opacity: 1; transform: translateX(-50%) translateX(0); }
+    }
+
     /* ALERTS */
     .alert { border-radius: 8px; font-size: 0.9rem; }
 
     @media (max-width: 768px) {
       .sidebar { display: none; }
       .main-content { margin-left: 0; padding: 1rem; }
+      .swipe-hint { display: block; }
     }
   </style>
   {% block extra_css %}{% endblock %}
@@ -152,6 +187,10 @@
     </div>
   </div>
 </nav>
+
+{% if user.is_authenticated %}
+<div id="swipe-hint" class="swipe-hint" aria-hidden="true">SWIPE >>></div>
+{% endif %}
 
 <div style="padding-top:60px">
 {% if user.is_authenticated %}
@@ -226,6 +265,30 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const hint = document.getElementById('swipe-hint');
+    if (!hint) return;
+
+    if (sessionStorage.getItem('swipeHintShown') === 'true') {
+      return;
+    }
+
+    hint.style.display = 'block';
+    requestAnimationFrame(function () {
+      hint.classList.add('show');
+    });
+
+    window.setTimeout(function () {
+      hint.classList.remove('show');
+      hint.classList.add('hide');
+      window.setTimeout(function () {
+        hint.style.display = 'none';
+        sessionStorage.setItem('swipeHintShown', 'true');
+      }, 500);
+    }, 5000);
+  });
+</script>
 {% block extra_js %}{% endblock %}
 </body>
 </html>
