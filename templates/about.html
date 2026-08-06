@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% block title %}About — CRS Fire Service{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-12">
+    <div class="text-white p-5 rounded-4 mb-4" style="background:linear-gradient(135deg,#1a1a2e 0%,#2c3e50 100%);">
+      <div class="d-flex align-items-center gap-3 mb-3">
+        <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:56px;height:56px;background:#e67e22">
+          <i class="bi bi-fire fs-3 text-white"></i>
+        </div>
+        <div>
+          <h2 class="fw-bold mb-1">Online Disaster Report Management System</h2>
+          <p class="mb-0 text-light">Cross River State Fire Service, Calabar</p>
+        </div>
+      </div>
+      <p class="lead mb-4" style="max-width:760px;">
+        Empowering citizens and emergency responders with real-time disaster reporting and management technology.
+      </p>
+      <div class="d-flex flex-wrap gap-2">
+        <a href="{% url 'accounts:register' %}" class="btn btn-crs">Get Started</a>
+        <a href="{% url 'reports:anonymous_submit' %}" class="btn btn-outline-light">Submit Anonymous Report</a>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body p-4">
+        <h4 class="fw-bold mb-3" style="color:#1a1a2e">About the System</h4>
+        <p class="text-muted mb-0">
+          This Online Disaster Report Management System was designed and implemented to replace the existing manual paper-based record keeping system at Cross River State Fire Service, Calabar. The system provides a fast, secure, and centralized web-based platform for reporting, tracking, managing and archiving fire disaster incidents across Cross River State, Nigeria.
+        </p>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body p-4">
+        <h4 class="fw-bold mb-3" style="color:#1a1a2e">Key Features</h4>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="card h-100" style="border-left:4px solid #c0392b; border-radius:12px; transition:box-shadow .2s ease;">
+              <div class="card-body">
+                <i class="bi bi-file-earmark-plus fs-3 mb-2" style="color:#c0392b"></i>
+                <h6 class="fw-bold">Easy Report Submission</h6>
+                <p class="text-muted small mb-0">Submit fire disaster reports online from anywhere with photo and video evidence attached.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card h-100" style="border-left:4px solid #c0392b; border-radius:12px; transition:box-shadow .2s ease;">
+              <div class="card-body">
+                <i class="bi bi-person-badge fs-3 mb-2" style="color:#c0392b"></i>
+                <h6 class="fw-bold">Role-Based Access</h6>
+                <p class="text-muted small mb-0">Separate dashboards for reporters, field responders and administrators with specific permissions for each role.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card h-100" style="border-left:4px solid #c0392b; border-radius:12px; transition:box-shadow .2s ease;">
+              <div class="card-body">
+                <i class="bi bi-bell fs-3 mb-2" style="color:#c0392b"></i>
+                <h6 class="fw-bold">Real-Time Notifications</h6>
+                <p class="text-muted small mb-0">Automatic alerts notify administrators and responders instantly when a new report is submitted.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card h-100" style="border-left:4px solid #c0392b; border-radius:12px; transition:box-shadow .2s ease;">
+              <div class="card-body">
+                <i class="bi bi-search fs-3 mb-2" style="color:#c0392b"></i>
+                <h6 class="fw-bold">Instant Record Retrieval</h6>
+                <p class="text-muted small mb-0">Search and retrieve any past disaster record within seconds by date, location or report ID.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card h-100" style="border-left:4px solid #c0392b; border-radius:12px; transition:box-shadow .2s ease;">
+              <div class="card-body">
+                <i class="bi bi-bar-chart fs-3 mb-2" style="color:#c0392b"></i>
+                <h6 class="fw-bold">Statistics and Reports</h6>
+                <p class="text-muted small mb-0">Generate monthly and annual statistical summaries and charts for management and government agencies.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card h-100" style="border-left:4px solid #c0392b; border-radius:12px; transition:box-shadow .2s ease;">
+              <div class="card-body">
+                <i class="bi bi-shield-check fs-3 mb-2" style="color:#c0392b"></i>
+                <h6 class="fw-bold">Secure and Auditable</h6>
+                <p class="text-muted small mb-0">Every action in the system is logged with a timestamp providing a full tamper-proof audit trail.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body p-4">
+        <h4 class="fw-bold mb-4" style="color:#1a1a2e">How It Works</h4>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="text-center p-3">
+              <div class="display-4 fw-bold mb-2" style="color:#e67e22">1</div>
+              <h6 class="fw-bold">Report</h6>
+              <p class="text-muted small mb-0">Citizen or officer submits a disaster report online or without an account.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="text-center p-3">
+              <div class="display-4 fw-bold mb-2" style="color:#e67e22">2</div>
+              <h6 class="fw-bold">Respond</h6>
+              <p class="text-muted small mb-0">Admin assigns a field responder who updates the status in real time.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="text-center p-3">
+              <div class="display-4 fw-bold mb-2" style="color:#e67e22">3</div>
+              <h6 class="fw-bold">Resolve</h6>
+              <p class="text-muted small mb-0">Incident is resolved and permanently archived for future reference.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body p-4">
+        <h4 class="fw-bold mb-3" style="color:#1a1a2e">Contact / Case Study Info</h4>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <ul class="list-unstyled mb-0">
+              <li><strong>Organization:</strong> Cross River State Fire Service</li>
+              <li><strong>Location:</strong> Calabar, Cross River State, Nigeria</li>
+              <li><strong>System Type:</strong> Web-Based Information System</li>
+            </ul>
+          </div>
+          <div class="col-md-6">
+            <ul class="list-unstyled mb-0">
+              <li><strong>Technology:</strong> Python Django, SQLite, Bootstrap 5</li>
+              <li><strong>Purpose:</strong> Final Year Computer Science Project</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center py-4 border-top mt-4">
+      <p class="mb-1 fw-bold" style="color:#1a1a2e">Designed and Developed as a Final Year Project</p>
+      <p class="text-muted mb-1">Department of Computer Science</p>
+      <p class="text-muted">University of Cross River State (UNICROSS), Nigeria</p>
+      <p class="text-muted">Reg. No: 22/CSC/109 Etalong Iripia</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

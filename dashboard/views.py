@@ -6,6 +6,10 @@ from accounts.models import CustomUser
 from notifications.models import Notification
 
 
+def about_page(request):
+    return render(request, 'about.html')
+
+
 def _feed_context():
     return {
         'feed_reports': DisasterReport.objects.select_related('category', 'location').order_by('-reported_at')[:10],
