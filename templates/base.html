@@ -96,38 +96,203 @@
     .btn-crs { background: var(--crs-red); color: #fff; border: none; }
     .btn-crs:hover { background: #a93226; color: #fff; }
 
-    /* SWIPE HINT */
-    .swipe-hint {
+    /* MOBILE SIDEBAR */
+    #mobileTrigger,
+    #mobileSidebar,
+    #mobileOverlay {
+      display: none;
+    }
+    #mobileTrigger {
       position: fixed;
-      top: 80px;
-      left: 50%;
-      transform: translateX(-50%);
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      width: 28px;
+      height: 60px;
+      border-radius: 0 8px 8px 0;
+      background: var(--crs-red);
+      color: #fff;
+      border: none;
       z-index: 9999;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #mobileSidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 78vw;
+      max-width: 300px;
+      height: 100vh;
+      background: #1c1c1e;
+      border-radius: 0 20px 20px 0;
+      box-shadow: 4px 0 24px rgba(0,0,0,0.4);
+      backdrop-filter: blur(10px);
+      transform: translateX(-100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 9998;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding-bottom: 24px;
+    }
+    #mobileSidebar.open {
+      transform: translateX(0);
+    }
+    #mobileSidebar::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
+    #mobileSidebar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    #mobileOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(2px);
+      z-index: 9997;
       display: none;
       opacity: 0;
-      padding: 10px 24px;
-      border: 2px solid var(--crs-red);
-      border-radius: 50px;
-      background: #EDE8E0;
-      color: var(--crs-red);
+      transition: opacity 0.3s ease;
+    }
+    #mobileOverlay.visible {
+      display: block;
+      opacity: 1;
+    }
+    .mobile-sidebar-top {
+      position: relative;
+      padding: 18px 20px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .mobile-sidebar-close {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .mobile-sidebar-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--crs-red);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 22px;
+      font-weight: bold;
+      margin-top: 16px;
+    }
+    .mobile-sidebar-avatar + .mobile-sidebar-name {
+      margin-top: 12px;
+    }
+    .mobile-sidebar-name {
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    .mobile-sidebar-role {
+      color: #aaa;
+      font-size: 0.75rem;
+      margin-top: 4px;
+      margin-bottom: 16px;
+    }
+    .mobile-sidebar-search {
+      width: 90%;
+      margin: 0 auto 20px;
+      position: relative;
+    }
+    .mobile-sidebar-search input {
+      width: 100%;
+      padding: 8px 14px 8px 34px;
+      border-radius: 10px;
+      border: none;
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      font-size: 0.85rem;
+    }
+    .mobile-sidebar-search input::placeholder {
+      color: #888;
+    }
+    .mobile-sidebar-search input:focus {
+      outline: none;
+      background: rgba(255,255,255,0.12);
+    }
+    .mobile-sidebar-search .bi-search {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #aaa;
+      font-size: 0.95rem;
+    }
+    .mobile-sidebar-group {
+      padding: 16px 0 6px 0;
+    }
+    .mobile-sidebar-group-label {
+      color: #666;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.15em;
-      font-size: 0.8rem;
-      white-space: nowrap;
-      transition: opacity 0.5s ease;
+      padding: 0 20px 6px;
+      margin-bottom: 4px;
     }
-    .swipe-hint.show {
-      opacity: 1;
-      animation: swipePulse 1.2s ease-in-out infinite;
+    .mobile-sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 0 0 0 0;
     }
-    .swipe-hint.hide {
-      opacity: 0;
+    .mobile-sidebar-nav a {
+      color: #ccc;
+      padding: 13px 20px;
+      border-radius: 10px;
+      margin: 2px 10px;
+      font-size: 0.9rem;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      transition: all 0.2s ease;
     }
-    @keyframes swipePulse {
-      0% { opacity: 1; transform: translateX(-50%) translateX(0); }
-      50% { opacity: 0.3; transform: translateX(-50%) translateX(8px); }
-      100% { opacity: 1; transform: translateX(-50%) translateX(0); }
+    .mobile-sidebar-nav a i {
+      margin-right: 14px;
+      font-size: 18px;
+      width: 18px;
+      text-align: center;
+    }
+    .mobile-sidebar-nav a:hover {
+      background: rgba(255,255,255,0.07);
+      color: #fff;
+    }
+    .mobile-sidebar-nav a.active {
+      background: var(--crs-red);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(192,57,43,0.4);
+    }
+    .mobile-sidebar-nav a.logout {
+      color: #ff6b6b;
     }
 
     /* ALERTS */
@@ -136,7 +301,18 @@
     @media (max-width: 768px) {
       .sidebar { display: none; }
       .main-content { margin-left: 0; padding: 1rem; }
-      .swipe-hint { display: block; }
+      #mobileTrigger,
+      #mobileSidebar,
+      #mobileOverlay {
+        display: block;
+      }
+    }
+    @media (min-width: 769px) {
+      #mobileTrigger,
+      #mobileSidebar,
+      #mobileOverlay {
+        display: none !important;
+      }
     }
   </style>
   {% block extra_css %}{% endblock %}
@@ -189,7 +365,65 @@
 </nav>
 
 {% if user.is_authenticated %}
-<div id="swipe-hint" class="swipe-hint" aria-hidden="true">SWIPE >>></div>
+<button id="mobileTrigger" type="button" aria-label="Open mobile navigation"><<</button>
+<div id="mobileSidebar" class="mobile-sidebar" aria-hidden="true">
+  <div class="mobile-sidebar-top">
+    <button id="mobileSidebarClose" type="button" class="mobile-sidebar-close" aria-label="Close mobile navigation">&gt;</button>
+    <div class="mobile-sidebar-avatar">{{ user.first_name|slice:":1"|upper }}</div>
+    <div class="mobile-sidebar-name">{{ user.get_full_name }}</div>
+    <div class="mobile-sidebar-role">{{ user.role|capfirst }}</div>
+    <div class="mobile-sidebar-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Search..." aria-label="Search navigation" />
+    </div>
+  </div>
+  <div class="mobile-sidebar-group">
+    <div class="mobile-sidebar-group-label">Menu</div>
+    <nav class="mobile-sidebar-nav">
+      <a href="{% url 'dashboard:home' %}" class="mobile-nav-link {% if request.path == '/dashboard/' or request.path == '/' %}active{% endif %}">
+        <i class="bi bi-speedometer2"></i>My Dashboard
+      </a>
+      <a href="{% url 'notifications:list' %}" class="mobile-nav-link {% if request.path == '/notifications/' %}active{% endif %}">
+        <i class="bi bi-bell"></i>Notifications
+        {% with count=user.notifications.all|length %}
+        {% if count > 0 %}
+        <span class="badge badge-notif rounded-pill ms-auto">{{ count }}</span>
+        {% endif %}
+        {% endwith %}
+      </a>
+      <a href="{% url 'reports:list' %}" class="mobile-nav-link {% if request.path == '/reports/' %}active{% endif %}">
+        <i class="bi bi-file-earmark-text"></i>My Reports
+      </a>
+      {% if user.role == 'reporter' or user.role == 'admin' %}
+      <a href="{% url 'reports:submit' %}" class="mobile-nav-link {% if request.path == '/reports/submit/' %}active{% endif %}">
+        <i class="bi bi-plus-circle"></i>Submit Report
+      </a>
+      {% endif %}
+      {% if user.role == 'admin' %}
+      <a href="{% url 'reports:list' %}" class="mobile-nav-link {% if request.path == '/reports/' %}active{% endif %}">
+        <i class="bi bi-list-ul"></i>All Reports
+      </a>
+      {% endif %}
+      {% if user.role == 'responder' %}
+      <a href="{% url 'reports:list' %}" class="mobile-nav-link {% if request.path == '/reports/' %}active{% endif %}">
+        <i class="bi bi-clipboard-check"></i>My Assignments
+      </a>
+      {% endif %}
+    </nav>
+  </div>
+  <div class="mobile-sidebar-group">
+    <div class="mobile-sidebar-group-label">General</div>
+    <nav class="mobile-sidebar-nav">
+      <a href="{% url 'about' %}" class="mobile-nav-link {% if request.path == '/about/' %}active{% endif %}">
+        <i class="bi bi-info-circle"></i>About
+      </a>
+      <a href="{% url 'accounts:logout' %}" class="mobile-nav-link logout">
+        <i class="bi bi-box-arrow-right"></i>Logout
+      </a>
+    </nav>
+  </div>
+</div>
+<div id="mobileOverlay"></div>
 {% endif %}
 
 <div style="padding-top:60px">
@@ -267,26 +501,42 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    const hint = document.getElementById('swipe-hint');
-    if (!hint) return;
+    const trigger = document.getElementById('mobileTrigger');
+    const sidebar = document.getElementById('mobileSidebar');
+    const overlay = document.getElementById('mobileOverlay');
+    const closeBtn = document.getElementById('mobileSidebarClose');
+    if (!trigger || !sidebar || !overlay || !closeBtn) return;
 
-    if (sessionStorage.getItem('swipeHintShown') === 'true') {
-      return;
+    function openSidebar() {
+      sidebar.classList.add('open');
+      overlay.classList.add('visible');
+      trigger.textContent = '>>';
+      trigger.setAttribute('aria-label', 'Close mobile navigation');
+      document.body.style.overflow = 'hidden';
     }
 
-    hint.style.display = 'block';
-    requestAnimationFrame(function () {
-      hint.classList.add('show');
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('visible');
+      trigger.textContent = '<<';
+      trigger.setAttribute('aria-label', 'Open mobile navigation');
+      document.body.style.overflow = '';
+    }
+
+    trigger.addEventListener('click', function () {
+      if (sidebar.classList.contains('open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
     });
 
-    window.setTimeout(function () {
-      hint.classList.remove('show');
-      hint.classList.add('hide');
-      window.setTimeout(function () {
-        hint.style.display = 'none';
-        sessionStorage.setItem('swipeHintShown', 'true');
-      }, 500);
-    }, 5000);
+    closeBtn.addEventListener('click', closeSidebar);
+    overlay.addEventListener('click', closeSidebar);
+
+    sidebar.querySelectorAll('a.mobile-nav-link').forEach(function (link) {
+      link.addEventListener('click', closeSidebar);
+    });
   });
 </script>
 {% block extra_js %}{% endblock %}
