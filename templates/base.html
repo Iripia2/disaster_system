@@ -96,19 +96,15 @@
     .btn-crs { background: var(--crs-red); color: #fff; border: none; }
     .btn-crs:hover { background: #a93226; color: #fff; }
 
-    /* MOBILE SIDEBAR */
-    #mobileTrigger,
-    #mobileSidebar,
-    #mobileOverlay {
-      display: none;
-    }
+    /* MOBILE SIDEBAR: safety-first defaults */
     #mobileTrigger {
       position: fixed;
       top: 50%;
       left: 0;
       transform: translateY(-50%);
-      width: 28px;
-      height: 60px;
+      width: 28px !important;
+      height: 60px !important;
+      overflow: hidden !important;
       border-radius: 0 8px 8px 0;
       background: var(--crs-red);
       color: #fff;
@@ -118,10 +114,19 @@
       font-weight: bold;
       cursor: pointer;
       box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
-      display: flex;
+      display: none;
       align-items: center;
       justify-content: center;
     }
+    /* remove any pseudo elements that could stretch */
+    #mobileTrigger::before,
+    #mobileTrigger::after {
+      content: none !important;
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+
     #mobileSidebar {
       position: fixed;
       top: 0;
@@ -136,36 +141,42 @@
       transform: translateX(-100%);
       transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 9998;
-      display: flex;
+      display: none;
       flex-direction: column;
       overflow-y: auto;
       padding-bottom: 24px;
+      pointer-events: none; /* default: do not block page interactions */
     }
     #mobileSidebar.open {
       transform: translateX(0);
+      pointer-events: all !important; /* only accept pointer events when open */
+      display: block;
     }
-    #mobileSidebar::-webkit-scrollbar {
-      width: 0;
-      height: 0;
-    }
-    #mobileSidebar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
+
+    #mobileSidebar::-webkit-scrollbar { width: 0; height: 0; }
+    #mobileSidebar { -ms-overflow-style: none; scrollbar-width: none; }
+
     #mobileOverlay {
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.6);
       backdrop-filter: blur(2px);
       z-index: 9997;
-      display: none;
+      display: none !important;
       opacity: 0;
+      visibility: hidden;
+      pointer-events: none !important;
       transition: opacity 0.3s ease;
     }
-    #mobileOverlay.visible {
-      display: block;
+    /* active overlay state */
+    #mobileOverlay.visible,
+    #mobileOverlay.active {
+      display: block !important;
       opacity: 1;
+      visibility: visible;
+      pointer-events: all !important;
     }
+
     .mobile-sidebar-top {
       position: relative;
       padding: 18px 20px 8px;
@@ -202,6 +213,18 @@
       font-size: 22px;
       font-weight: bold;
       margin-top: 16px;
+      overflow: hidden;
+    }
+    .mobile-sidebar-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .mobile-sidebar-avatar.empty {
+      background: transparent;
+      border: 2px dashed rgba(255,255,255,0.12);
+      color: transparent;
     }
     .mobile-sidebar-avatar + .mobile-sidebar-name {
       margin-top: 12px;
@@ -301,10 +324,34 @@
     @media (max-width: 768px) {
       .sidebar { display: none; }
       .main-content { margin-left: 0; padding: 1rem; }
-      #mobileTrigger,
-      #mobileSidebar,
-      #mobileOverlay {
-        display: block;
+
+      /* ensure trigger/sidebar/overlay show on mobile but keep safe defaults */
+      #mobileTrigger { display: flex; }
+      #mobileSidebar { display: block; }
+      #mobileOverlay { display: none !important; pointer-events: none !important; opacity: 0; visibility: hidden !important; }
+
+      /* hide overlay when not active */
+      #mobileOverlay.hidden,
+      #mobileOverlay:not(.active) {
+        display: none !important;
+        pointer-events: none !important;
+        visibility: hidden !important;
+      }
+
+      #mobileSidebar:not(.open) {
+        pointer-events: none !important;
+      }
+
+      /* remove transforms/stacking contexts on mobile that could block taps */
+      .main-content {
+        transform: none !important;
+        will-change: auto !important;
+        position: static !important;
+      }
+
+      /* global safety: allow pointer events for page elements */
+      body > *:not(#mobileSidebar):not(#mobileOverlay):not(#mobileTrigger) {
+        pointer-events: auto !important;
       }
     }
     @media (min-width: 769px) {
@@ -369,7 +416,22 @@
 <div id="mobileSidebar" class="mobile-sidebar" aria-hidden="true">
   <div class="mobile-sidebar-top">
     <button id="mobileSidebarClose" type="button" class="mobile-sidebar-close" aria-label="Close mobile navigation">&gt;</button>
-    <div class="mobile-sidebar-avatar">{{ user.first_name|slice:":1"|upper }}</div>
+
+    {# avatar: show image if available, else empty circle; link to profile for upload #}
+    <a href="{% url 'accounts:profile' %}" title="Edit profile" style="text-decoration:none;">
+      {% if user.profile and user.profile.image %}
+        <div class="mobile-sidebar-avatar"><img src="{{ user.profile.image.url }}" alt="{{ user.get_full_name }}"></div>
+      {% elif user.profile and user.profile.avatar %}
+        <div class="mobile-sidebar-avatar"><img src="{{ user.profile.avatar.url }}" alt="{{ user.get_full_name }}"></div>
+      {% elif user.photo %}
+        <div class="mobile-sidebar-avatar"><img src="{{ user.photo.url }}" alt="{{ user.get_full_name }}"></div>
+      {% elif user.avatar %}
+        <div class="mobile-sidebar-avatar"><img src="{{ user.avatar.url }}" alt="{{ user.get_full_name }}"></div>
+      {% else %}
+        <div class="mobile-sidebar-avatar empty" aria-hidden="true"></div>
+      {% endif %}
+    </a>
+
     <div class="mobile-sidebar-name">{{ user.get_full_name }}</div>
     <div class="mobile-sidebar-role">{{ user.role|capfirst }}</div>
     <div class="mobile-sidebar-search">
@@ -497,6 +559,13 @@
 {% endif %}
 </div>
 
+<!-- Footer: Reg No.(***) and ©2026 -->
+<footer class="py-3 mt-4" style="background:transparent;text-align:center;color:#666;font-size:0.9rem">
+  <div>Reg No.(***)</div>
+  <div>CRS Fire Service</div>
+  <div>©2026</div>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -509,7 +578,18 @@
 
     function openSidebar() {
       sidebar.classList.add('open');
+      sidebar.setAttribute('aria-hidden','false');
+
       overlay.classList.add('visible');
+      overlay.classList.remove('hidden');
+      overlay.setAttribute('aria-hidden','false');
+
+      // ensure overlay is interactive and visible
+      overlay.style.display = 'block';
+      overlay.style.pointerEvents = 'all';
+      overlay.style.opacity = '1';
+      overlay.style.visibility = 'visible';
+
       trigger.textContent = '>>';
       trigger.setAttribute('aria-label', 'Close mobile navigation');
       document.body.style.overflow = 'hidden';
@@ -517,13 +597,25 @@
 
     function closeSidebar() {
       sidebar.classList.remove('open');
+      sidebar.setAttribute('aria-hidden','true');
+
       overlay.classList.remove('visible');
+      overlay.classList.add('hidden');
+      overlay.setAttribute('aria-hidden','true');
+
+      // ensure overlay is fully removed from layout and non-interactive
+      overlay.style.opacity = '0';
+      overlay.style.visibility = 'hidden';
+      overlay.style.pointerEvents = 'none';
+      overlay.style.display = 'none';
+
       trigger.textContent = '<<';
       trigger.setAttribute('aria-label', 'Open mobile navigation');
       document.body.style.overflow = '';
     }
 
-    trigger.addEventListener('click', function () {
+    trigger.addEventListener('click', function (e) {
+      e.stopPropagation();
       if (sidebar.classList.contains('open')) {
         closeSidebar();
       } else {
@@ -531,11 +623,33 @@
       }
     });
 
-    closeBtn.addEventListener('click', closeSidebar);
-    overlay.addEventListener('click', closeSidebar);
+    closeBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      closeSidebar();
+    });
+
+    overlay.addEventListener('click', function () {
+      closeSidebar();
+    });
 
     sidebar.querySelectorAll('a.mobile-nav-link').forEach(function (link) {
-      link.addEventListener('click', closeSidebar);
+      link.addEventListener('click', function () {
+        closeSidebar();
+      });
+    });
+
+    // ensure overlay is not left visible on resize/orientation changes
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 768) {
+        closeSidebar();
+      }
+    });
+
+    // close on escape
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape'){
+        closeSidebar();
+      }
     });
   });
 </script>
